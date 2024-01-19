@@ -2,34 +2,25 @@
 
 namespace Worker.HostedService.Jobs;
 
-public class AnotherHelloWorldJob : CronJobService
+public class AnotherHelloWorldJob(ILogger<AnotherHelloWorldJob> logger, IScheduleConfig<AnotherHelloWorldJob> config) : CronJobService(config.CronExpression, config.TimeZoneInfo)
 {
-    private readonly ILogger<AnotherHelloWorldJob> _logger;
-    private readonly IScheduleConfig<AnotherHelloWorldJob> _config;
-    
-    public AnotherHelloWorldJob(ILogger<AnotherHelloWorldJob> logger, IScheduleConfig<AnotherHelloWorldJob> config) : base(config.CronExpression, config.TimeZoneInfo)
-    {
-        _logger = logger;
-        _config = config;
-    }
-    
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"{nameof(AnotherHelloWorldJob)} start. [Cron：{_config.CronExpression}][Timezone：{_config.TimeZoneInfo.DisplayName}]");
+        logger.LogInformation($"{nameof(AnotherHelloWorldJob)} start. [Cron：{config.CronExpression}][Timezone：{config.TimeZoneInfo.DisplayName}]");
        
         await base.StartAsync(cancellationToken);
     }
 
     public override async Task DoWorkAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"{nameof(AnotherHelloWorldJob)} working. [DateTime：{TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, _config.TimeZoneInfo)}]");
+        logger.LogInformation($"{nameof(AnotherHelloWorldJob)} working. [DateTime：{TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, config.TimeZoneInfo)}]");
         
         await Task.CompletedTask;
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"{nameof(AnotherHelloWorldJob)} stop.");
+        logger.LogInformation($"{nameof(AnotherHelloWorldJob)} stop.");
         
         await base.StopAsync(cancellationToken);
     }
